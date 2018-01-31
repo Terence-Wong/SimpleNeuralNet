@@ -1,10 +1,4 @@
-
-
 import java.io.*;
-
-
-
-
 
 public class NeuralNetwork{
 	
@@ -21,9 +15,10 @@ public class NeuralNetwork{
 		0.0
 	};
 	
-	
+	static Neuron[][] network;
+	static NetworkVisualizer brain;
 	public static void main(String[]args)throws IOException{
-		Neuron[][] network = new Neuron[3][];
+		network = new Neuron[3][];
 		network[0] = new Neuron[]{
 			new Neuron(),
 			new Neuron()
@@ -36,30 +31,12 @@ public class NeuralNetwork{
 		network[2] = new Neuron[]{
 			new Neuron(network[1])
 		};
-		NetworkVisualizer brain = new NetworkVisualizer(network);
+		brain = new NetworkVisualizer(network);
 		brain.frame.add(brain);
 		
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		
 		//test network
-		while(true){
-			String[] in = br.readLine().split(" ");
-			if(in[0].equals("")){
-				break;
-			}
-			//input layer
-			for(int x = 0; x < network[0].length; x++){
-				network[0][x].value = Double.parseDouble(in[x]);
-			}
-			for(int y = 1; y < network.length; y++){
-				for(int x = 0; x < network[y].length; x++){
-					network[y][x].process();
-				}
-			}
-			brain.frame.repaint();
-			System.out.println(network[network.length-1][0].value);
-			
-		}
+		testNet();
 		
 		System.out.println("training");
 		//train network?
@@ -78,7 +55,7 @@ public class NeuralNetwork{
 				double MarginOfError = output[in] - network[network.length-1][0].value; // error for layer 3
 				if(epoch % 100000 == 0){
 					brain.frame.repaint();
-					br.readLine();
+					//br.readLine(); <-- used to 'pause' visualizer
 					System.out.println("Epoch " + epoch + ", Error: " + MarginOfError);
 				}
 				//double deltaError = MarginOfError * nonLin(network[network.length-1][0].sum,true) ; //delta for layer 3
@@ -89,6 +66,13 @@ public class NeuralNetwork{
 		}
 		System.out.println("finished training");
 		
+		//test network
+		testNet();
+		System.exit(0);
+	}
+	
+	public static void testNet() throws IOException{
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		//test network
 		while(true){
 			String[] in = br.readLine().split(" ");
@@ -107,8 +91,9 @@ public class NeuralNetwork{
 			brain.frame.repaint();
 			System.out.println(network[network.length-1][0].value);
 		}
-		System.out.println("ded");
 	}
+	
+	//Math functions
 	public static double sigmoid(double i){
 		return 1/(1+Math.exp(-i));
 	}
@@ -136,7 +121,6 @@ sigmoid function
 []	[]
 
 */
-
 
 
 /*
